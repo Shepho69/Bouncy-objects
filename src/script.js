@@ -3,8 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import CANNON from 'cannon'
 import { MathUtils } from 'three/src/math/MathUtils'
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
+console.log(CANNON)
 
 /**
  * Debug
@@ -12,24 +12,13 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 const gui = new GUI()
 const debugObject = {}
 
-const parameters = {
-    materialColor: '#34bbfe'
-}
-
-gui
-    .addColor(parameters, 'materialColor')
-    .onChange(() => {
-        material.color.set(parameters.materialColor)
-        particlesMaterial.color.set(parameters.materialColor)
-    })
-
 debugObject.createSphere = () =>{
     createSphere(
         Math.random() * 0.5, 
         {
-            x: Math.random(), 
-            y: Math.random()*10+2.5, 
-            z: Math.random() 
+            x: (Math.random() - 0.5) * 3, 
+            y: 3, 
+            z: (Math.random() - 0.5) * 3 
         })
 }
 
@@ -40,13 +29,11 @@ debugObject.createBox = () =>{
         Math.random(),
         Math.random(), 
         {
-            x: (Math.random() * 10 - 5) , 
-            y: Math.random()*10+2.5, 
-            z: (Math.random() * 10 - 5) * 3 
+            x: (Math.random() - 0.5) , 
+            y: 3, 
+            z: (Math.random() - 0.5) * 3 
         })
 }
-
-
 
 debugObject.reset = () => 
 {
@@ -75,18 +62,6 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-/* 
-* Enviornment map
-*/
-
-const rgbeLoader = new RGBELoader()
-rgbeLoader.load('./textures/environmentMap/2k.hdr', (environmentMap) =>
-{
-  environmentMap.mapping = THREE.EquirectangularReflectionMapping
-
-  scene.background = environmentMap
-  scene.environment = environmentMap
-})
 
 /* 
  *Sounds
@@ -112,12 +87,12 @@ const textureLoader = new THREE.TextureLoader()
 const cubeTextureLoader = new THREE.CubeTextureLoader()
 
 const environmentMapTexture = cubeTextureLoader.load([
-    '/textures/environmentMaps/1/px.png',
-    '/textures/environmentMaps/1/nx.png',
-    '/textures/environmentMaps/1/py.png',
-    '/textures/environmentMaps/1/ny.png',
-    '/textures/environmentMaps/1/pz.png',
-    '/textures/environmentMaps/1/nz.png'
+    '/textures/environmentMaps/0/px.png',
+    '/textures/environmentMaps/0/nx.png',
+    '/textures/environmentMaps/0/py.png',
+    '/textures/environmentMaps/0/ny.png',
+    '/textures/environmentMaps/0/pz.png',
+    '/textures/environmentMaps/0/nz.png'
 ])
 
 /* 
@@ -162,7 +137,7 @@ world.addBody(floorBody)
  * Floor
  */
 const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(50, 50),
+    new THREE.PlaneGeometry(10, 10),
     new THREE.MeshStandardMaterial({
         color: '#777777',
         metalness: 0.3,
@@ -225,7 +200,6 @@ scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-
 controls.enableDamping = true
 
 /**
@@ -247,7 +221,6 @@ const objectsToUpdate = []
 // Sphere
 const sphereGeometry = new THREE.SphereGeometry(1, 20, 20)
 const sphereMaterial = new THREE.MeshStandardMaterial({
-    color:parameters.materialColor,
     metalness: 0.3, 
     roughness: 0.4, 
     envMap: environmentMapTexture
@@ -256,13 +229,10 @@ const sphereMaterial = new THREE.MeshStandardMaterial({
 //Box 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
 const boxMaterial = new THREE.MeshStandardMaterial({
-    color:parameters.materialColor,
     metalness: 0.3, 
     roughness: 0.4, 
     envMap: environmentMapTexture
 })
-
-
 
 const createSphere = (radius, position) =>
 {
@@ -322,14 +292,7 @@ const createBox = (width, height, depth, position) =>
         body: body
     })
 }
-
-
-
-
 createSphere(0.5, {x: 0, y: 3, z:0 })
-
-
-
 /* createBox(0.5, 0.5, 0.5, { x: -1, y: 3, z: 0 }) */
 
 
